@@ -2,6 +2,7 @@
 #include <vector>
 #include <ctime>
 #include <cstdlib>
+#include <chrono>
 
 using namespace std;
 
@@ -10,7 +11,7 @@ bool metaEncontrada = false;
 
 // --- FUNCIÓN DE RESOLUCIÓN (DFS) ---
 void resolverDirecto(vector<vector<char>>& lab, int f, int c, int filas, int cols) {
-    // Validar: Si ya se encontró la meta, fuera de límites o hay obstáculo
+    // Validar: Si ya se encontró la meta, si esta fuera de límites o hay obstáculo
     if (metaEncontrada) return;
     if (f < 0 || f >= filas || c < 0 || c >= cols) return;
     if (lab[f][c] == '#' || lab[f][c] == '*') return;
@@ -64,6 +65,8 @@ int main() {
 
     srand(time(NULL));
 
+    auto start = chrono::high_resolution_clock::now();
+
     // Inicializar con muros
     vector<vector<char>> laberinto(filas, vector<char>(columnas, '#'));
 
@@ -97,8 +100,12 @@ int main() {
     cout << "\n--- LABERINTO RESUELTO ---" << endl;
     dibujarLaberinto(laberinto, filas, columnas);
 
+    auto end = chrono::high_resolution_clock::now();
+    chrono::duration<double, milli> duration = end - start;
+
     if (metaEncontrada) {
-        cout << "\nEl raton encontro el camino marcado con '*'" << endl;
+        cout << "\nEl raton encontro el camino marcado con '*'" << endl;    
+        cout << "\nEl laberinto se genero y se encontro salida en: " << duration.count() << " milisegundos." << endl;
     }
 
     return 0;
