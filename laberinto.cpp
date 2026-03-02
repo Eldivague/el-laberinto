@@ -8,33 +8,33 @@ using namespace std;
 // Variables globales para controlar la resolución
 bool metaEncontrada = false;
 
-// --- FUNCIÓN DE RESOLUCIÓN (DFS VOID) ---
+// --- FUNCIÓN DE RESOLUCIÓN (DFS) ---
 void resolverDirecto(vector<vector<char>>& lab, int f, int c, int filas, int cols) {
-    // 1. Validaciones: Si ya se encontró la meta, fuera de límites o hay obstáculo
+    // Validar: Si ya se encontró la meta, fuera de límites o hay obstáculo
     if (metaEncontrada) return;
     if (f < 0 || f >= filas || c < 0 || c >= cols) return;
     if (lab[f][c] == '#' || lab[f][c] == '*') return;
 
-    // 2. ¿Llegamos a la salida 'E'?
+    // ¿Llegamos a la salida 'E'?
     if (lab[f][c] == 'E') {
         metaEncontrada = true;
         return;
     }
 
-    // 3. MARCAR EL PASO
+    // Marcar el recorrido
     char original = lab[f][c];
     // Marcamos con '*' siempre que no sea la Entrada 'I'
     if (lab[f][c] != 'I') {
         lab[f][c] = '*';
     }
 
-    // 4. EXPLORAR (Intentar las 4 direcciones)
+    // EXPLORAR (Intentar las 4 direcciones aplicando recursividad)
     resolverDirecto(lab, f + 1, c, filas, cols); // Abajo
     resolverDirecto(lab, f, c + 1, filas, cols); // Derecha
     resolverDirecto(lab, f - 1, c, filas, cols); // Arriba
     resolverDirecto(lab, f, c - 1, filas, cols); // Izquierda
 
-    // 5. BACKTRACKING
+    // BACKTRACKING
     // Si después de explorar no se encontró la meta, limpiamos el rastro
     if (!metaEncontrada && lab[f][c] == '*') {
         lab[f][c] = original;
@@ -42,16 +42,18 @@ void resolverDirecto(vector<vector<char>>& lab, int f, int c, int filas, int col
 }
 
 // --- FUNCIÓN PARA DIBUJAR ---
-void dibujarLaberinto(const vector<vector<char>>& lab) {
-    for (const auto& fila : lab) {
-        for (char celda : fila) {
-            cout << celda << " ";
+void dibujarLaberinto(vector<vector<char>>& lab, int filas, int cols) {
+    for (int i = 0; i < filas; i++) {
+        for (int j = 0; j < cols; j++) {
+            cout << lab[i][j] << " ";
         }
-        cout << endl;
+        cout << endl; // Salto de línea al terminar cada fila
     }
 }
 
 int main() {
+
+    // Definimos el tamanho del laberinto
     int filas, columnas;
 
     cout << "Selecciona un tamanho de fila : ";
@@ -62,10 +64,10 @@ int main() {
 
     srand(time(NULL));
 
-    // 1. Inicializar con muros
+    // Inicializar con muros
     vector<vector<char>> laberinto(filas, vector<char>(columnas, '#'));
 
-    // 2. Crear camino garantizado (Túnel seguro)
+    // Crear camino garantizado (Túnel seguro)
     int f = 0, c = 0;
     while (f < filas - 1 || c < columnas - 1) {
         laberinto[f][c] = ' '; 
@@ -73,7 +75,7 @@ int main() {
         else c++;
     }
 
-    // 3. Añadir azar (Abrir más caminos)
+    // Añadir azar (Abrir más caminos)
     for (int i = 0; i < filas; i++) {
         for (int j = 0; j < columnas; j++) {
             if (laberinto[i][j] == '#' && rand() % 10 < 4) {
@@ -82,18 +84,18 @@ int main() {
         }
     }
 
-    // 4. Definir Entrada y Salida
+    // Definir Entrada y Salida
     laberinto[0][0] = 'I';
     laberinto[filas - 1][columnas - 1] = 'E';
 
     cout << "--- LABERINTO GENERADO ---" << endl;
-    dibujarLaberinto(laberinto);
+    dibujarLaberinto(laberinto, filas, columnas);
 
-    // 5. RESOLVER
+    // Resolvemos el laberinto
     resolverDirecto(laberinto, 0, 0, filas, columnas);
 
-    cout << "\n--- LABERINTO RESUELTO (DFS) ---" << endl;
-    dibujarLaberinto(laberinto);
+    cout << "\n--- LABERINTO RESUELTO ---" << endl;
+    dibujarLaberinto(laberinto, filas, columnas);
 
     if (metaEncontrada) {
         cout << "\nEl raton encontro el camino marcado con '*'" << endl;
