@@ -55,7 +55,8 @@ void dibujarLaberinto(vector<vector<char>>& lab, int filas, int cols) {
 int main() {
 
     // Definimos el tamanho del laberinto
-    int filas, columnas;
+    int filas = 10;
+    int columnas = 10;
 
     cout << "Selecciona un tamanho de fila : ";
     cin >> filas;
@@ -109,4 +110,5 @@ int main() {
     }
 
     return 0;
+
 }
